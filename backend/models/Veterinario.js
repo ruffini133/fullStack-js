@@ -39,7 +39,7 @@ const VeterinarioSchema = new mongoose.Schema({
 
 // Antes de guardar el veterinario, hashear la contraseña  y usar el middleware pre
 
-VeterinarioSchema.pre("save", async function () {
+VeterinarioSchema.pre("save", async function (next) {
 	// evitamos que una contraseña hasheada se vuelva a hashear
 	if (!this.isModified("password")) {
 		next();
@@ -48,6 +48,14 @@ VeterinarioSchema.pre("save", async function () {
 	const salt = await bcrypt.genSaltSync(10);
 	this.password = await bcrypt.hash(this.password, salt);
 });
+
+// Crear un metodo para autenticar el usuario
+
+VeterinarioSchema.methods.comprobarPassword = async function (
+	passwordFormulario
+) {
+	return await bcrypt.compare(passwordFormulario, this.password);
+};
 
 const Veterinario = mongoose.model("Veterinario", VeterinarioSchema);
 export default Veterinario;
