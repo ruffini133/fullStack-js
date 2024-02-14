@@ -7,10 +7,12 @@ import {
 	autenticar,
 } from "../controllers/veterinarioController.js";
 
-router.post("/", registrar);
+import checkAuth from "../middleware/authMiddleware.js";
 
-router.get("/perfil", perfil);
+router.post("/", registrar);
 router.get("/confirmar/:token", confirmar);
 router.post("/login", autenticar);
+
+router.get("/perfil", checkAuth, perfil);
 
 export default router;
