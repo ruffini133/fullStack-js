@@ -1,5 +1,6 @@
 import Veterinario from "../models/Veterinario.js";
 import generarJWT from "../helpers/generarJWT.js";
+import generarId from "../helpers/generarId.js";
 
 const registrar = async (req, res) => {
 	// Cuando se envia informacion a una api de express, se almacena en req.body
@@ -78,7 +79,25 @@ const autenticar = async (req, res) => {
 	}
 };
 
-const olvidePassword = async (req, res) => {};
+const olvidePassword = async (req, res) => {
+	const { email } = req.body;
+
+	const existeVeterinario = await Veterinario.findOne({ email });
+	if (!existeVeterinario) {
+		const error = new Error("El usuario no existe");
+		return res.status(400).json({ msg: error.message });
+	}
+
+	try {
+		existeVeterinario.token = generarId();
+		await existeVeterinario.save();
+		res.json({
+			msg: "Se ha enviado un correo para reestablecer tu contraseña",
+		});
+	} catch (error) {
+		console.log(error);
+	}
+};
 
 const comprobarToken = async (req, res) => {};
 
