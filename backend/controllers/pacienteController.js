@@ -27,7 +27,9 @@ const obtenerPaciente = async (req, res) => {
 		res.status(404).json({ mensaje: "Paciente no encontrado" });
 	}
 
-	if (paciente.veterinario._id.toString !== req.veterinario._id.toString) {
+	if (
+		paciente.veterinario._id.toString() !== req.veterinario._id.toString()
+	) {
 		return res.json({ mensaje: "No autorizado" });
 	}
 
@@ -44,7 +46,9 @@ const actualizarPaciente = async (req, res) => {
 		res.status(404).json({ mensaje: "Paciente no encontrado" });
 	}
 
-	if (paciente.veterinario._id.toString !== req.veterinario._id.toString) {
+	if (
+		paciente.veterinario._id.toString() !== req.veterinario._id.toString()
+	) {
 		return res.json({ mensaje: "No autorizado" });
 	}
 
@@ -67,7 +71,27 @@ const actualizarPaciente = async (req, res) => {
 	}
 };
 
-const eliminarPaciente = async (req, res) => {};
+const eliminarPaciente = async (req, res) => {
+	const { id } = req.params;
+	const paciente = await Paciente.findById(id);
+
+	if (!paciente) {
+		res.status(404).json({ mensaje: "Paciente no encontrado" });
+	}
+
+	if (
+		paciente.veterinario._id.toString() !== req.veterinario._id.toString()
+	) {
+		return res.json({ mensaje: "No autorizado" });
+	}
+
+	try {
+		await paciente.deleteOne();
+		res.json({ mensaje: "Paciente eliminado" });
+	} catch (error) {
+		console.log(error);
+	}
+};
 
 export {
 	agregarPaciente,
