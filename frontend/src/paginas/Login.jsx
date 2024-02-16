@@ -10,7 +10,7 @@ const Login = () => {
         </h1>
       </div>
 
-      <div>
+      <div className="mt-20 rounded-xl bg-white px-5 py-10 shadow-lg md:mt-5">
         <form>
           <div>
             <label className="block text-xl font-bold uppercase text-gray-600">
