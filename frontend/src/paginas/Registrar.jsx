@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import Alerta from "../components/Alerta";
+import axios from "axios";
 
 const Registrar = () => {
   const [nombre, setNombre] = useState("");
@@ -10,7 +11,7 @@ const Registrar = () => {
 
   const [alerta, setAlerta] = useState({});
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Resetea la alerta al inicio para limpiar alertas previas.
@@ -32,6 +33,19 @@ const Registrar = () => {
         error: true,
       });
       return;
+    }
+
+    try {
+      const url = "http://localhost:4000/api/veterinarios";
+      const datos = { nombre, email, password }; // Agrupa los datos en un objeto
+      const respuesta = await axios.post(url, datos); // Pasa el objeto como segundo parámetro
+      setAlerta({
+        msg: "Usuario creado correctamente, Revisa tu email",
+        error: false,
+      });
+      console.log(respuesta);
+    } catch (error) {
+      setAlerta({ msg: error.response.data.msg, error: true });
     }
   };
 
@@ -104,7 +118,7 @@ const Registrar = () => {
 
           <input
             type="submit"
-            value="Iniciar Sesión"
+            value="Crear Cuenta"
             className="mt-10 w-full rounded-xl bg-indigo-700 px-10 py-3 font-bold uppercase text-white hover:cursor-pointer hover:bg-indigo-800 md:w-auto"
           />
         </form>
