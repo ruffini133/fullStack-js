@@ -1,11 +1,12 @@
 import Veterinario from "../models/Veterinario.js";
 import generarJWT from "../helpers/generarJWT.js";
 import generarId from "../helpers/generarId.js";
+import emailRegistro from "../helpers/emailRegistro.js";
 
 const registrar = async (req, res) => {
 	// Cuando se envia informacion a una api de express, se almacena en req.body
 
-	const { email } = req.body;
+	const { email, nombre } = req.body;
 
 	// Prevenir usuarios duplicados
 	const existeUsuario = await Veterinario.findOne({ email });
@@ -20,6 +21,13 @@ const registrar = async (req, res) => {
 		const veterinario = new Veterinario(req.body);
 		// Usamos un await para esperar a que se guarde el veterinario y no se ejecuten las siguientes lineas de codigo
 		const veterinarioGuardado = await veterinario.save();
+
+		// Enviar Email de Confirmacion
+		emailRegistro({
+			email,
+			nombre,
+			token: veterinarioGuardado.token,
+		});
 
 		res.json(veterinarioGuardado);
 	} catch (error) {

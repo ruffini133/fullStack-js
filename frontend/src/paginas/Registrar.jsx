@@ -55,7 +55,7 @@ const Registrar = () => {
     <>
       <div className="text-6xl font-black text-indigo-600">
         <h1>
-          Inicia Sesión y Administra tus
+          Crea tu Cuenta y Administra tus
           <span className="text-black"> Pacientes</span>
         </h1>
       </div>
