@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import Alerta from "../components/Alerta";
-import axios from "axios";
+import clienteAxios from "../config/axios";
 
 const Registrar = () => {
   const [nombre, setNombre] = useState("");
@@ -36,9 +36,8 @@ const Registrar = () => {
     }
 
     try {
-      const url = "http://localhost:4000/api/veterinarios";
-      const datos = { nombre, email, password }; // Agrupa los datos en un objeto
-      const respuesta = await axios.post(url, datos); // Pasa el objeto como segundo parámetro
+      const datos = { nombre, email, password };
+      const respuesta = await clienteAxios.post("/veterinarios", datos); // Pasa el objeto como segundo parámetro
       setAlerta({
         msg: "Usuario creado correctamente, Revisa tu email",
         error: false,
