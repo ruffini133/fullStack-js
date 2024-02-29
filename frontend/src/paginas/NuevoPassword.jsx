@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import Alerta from "../components/Alerta";
 import clienteAxios from "../config/axios";
 
@@ -7,6 +7,7 @@ const NuevoPassword = () => {
   const [password, setPassword] = useState("");
   const [alerta, setAlerta] = useState({});
   const [tokenValido, setTokenValido] = useState(false);
+  const [passwordModificado, setPasswordModificado] = useState(false);
 
   const params = useParams();
   const { token } = params;
@@ -27,6 +28,34 @@ const NuevoPassword = () => {
     comprobarToken();
   }, []);
 
+  const HandleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (password.length < 6) {
+      setAlerta({
+        msg: "El password debe tener al menos 6 caracteres",
+        error: true,
+      });
+      return;
+    }
+
+    try {
+      const url = `/veterinarios/olvide-password/${token}`;
+      const { data } = await clienteAxios.post(url, { password });
+
+      setPasswordModificado(true);
+
+      setAlerta({
+        msg: data.msg,
+      });
+    } catch (error) {
+      setAlerta({
+        msg: error.response.data.msg,
+        error: true,
+      });
+    }
+  };
+
   const { msg } = alerta;
 
   return (
@@ -43,27 +72,35 @@ const NuevoPassword = () => {
           {msg && <Alerta alerta={alerta} />}
 
           {tokenValido && (
-            <form>
-              <label className="mt-5 block text-xl font-bold uppercase text-gray-600">
-                Nuevo Password
-              </label>
+            <>
+              <form onSubmit={HandleSubmit}>
+                <label className="mt-5 block text-xl font-bold uppercase text-gray-600">
+                  Nuevo Password
+                </label>
 
-              <input
-                type="password"
-                placeholder="Ingresa tu Nuevo Password"
-                className="mt-3 w-full rounded-xl border bg-gray-50 p-3"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+                <input
+                  type="password"
+                  placeholder="Ingresa tu Nuevo Password"
+                  className="mt-3 w-full rounded-xl border bg-gray-50 p-3"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
 
-              <input
-                type="submit"
-                value="Restablecer Password"
-                className="mt-10 w-full rounded-xl bg-indigo-700 px-10 py-3 font-bold uppercase text-white hover:cursor-pointer hover:bg-indigo-800 md:w-auto"
-              />
-            </form>
+                <input
+                  type="submit"
+                  value="Restablecer Password"
+                  className="mt-10 w-full rounded-xl bg-indigo-700 px-10 py-3 font-bold uppercase text-white hover:cursor-pointer hover:bg-indigo-800 md:w-auto"
+                />
+              </form>
+            </>
           )}
         </div>
+
+        {passwordModificado && (
+          <Link className="my-5 block text-center text-gray-500" to="/">
+            Iniciar Sesión
+          </Link>
+        )}
       </div>
     </>
   );
