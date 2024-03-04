@@ -1,4 +1,6 @@
 import { Outlet, Navigate } from "react-router-dom";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 import useAuth from "../hooks/useAuth";
 
 const RutaProtegida = () => {
@@ -8,10 +10,10 @@ const RutaProtegida = () => {
 
   return (
     <>
-      <h1>Esta es una ruta protegida</h1>
-      <Outlet />
+      <Header />
 
       {auth?._id ? <Outlet /> : <Navigate to="/" />}
+      <Footer />
     </>
   );
 };
