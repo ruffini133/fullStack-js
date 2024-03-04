@@ -49,7 +49,9 @@ const PacientesProvider = ({ children }) => {
         );
 
         setPacientes(pacientesActualizados);
-      } catch (error) {}
+      } catch (error) {
+        console.error("Error al actualizar paciente:", error);
+      }
     } else {
       try {
         const { data } = await clienteAxios.post(
@@ -62,30 +64,36 @@ const PacientesProvider = ({ children }) => {
 
         setPacientes([pacienteAlmacenado, ...pacientes]);
       } catch (error) {
-        console.log(error.response.data.msg);
+        console.error("Error al crear paciente:", error.response.data.msg);
       }
-    }
-
-    try {
-      const token = localStorage.getItem("token");
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      };
-      const { data } = await clienteAxios.post("/pacientes", paciente, config);
-
-      const { createdAt, updatedAT, __v, ...pacienteAlmacenado } = data;
-
-      setPacientes([pacienteAlmacenado, ...pacientes]);
-    } catch (error) {
-      console.log(error.response.data.msg);
     }
   };
 
   const setEdicion = (paciente) => {
     setPaciente(paciente);
+  };
+
+  const eliminarPaciente = async (id) => {
+    const confirmar = confirm("¿Estás seguro de eliminar este paciente?");
+    if (confirmar) {
+      try {
+        const token = localStorage.getItem("token");
+        const config = {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        };
+        const { data } = await clienteAxios.delete(`/pacientes/${id}`, config);
+
+        const pacientesActualizados = pacientes.filter(
+          (pacientesState) => pacientesState._id !== id,
+        );
+        setPacientes(pacientesActualizados);
+      } catch (error) {
+        console.log(error);
+      }
+    }
   };
 
   return (
@@ -95,6 +103,7 @@ const PacientesProvider = ({ children }) => {
         guardarPaciente,
         setEdicion,
         paciente,
+        eliminarPaciente,
       }}
     >
       {children}
