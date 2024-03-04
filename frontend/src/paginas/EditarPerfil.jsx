@@ -1,6 +1,14 @@
 import AdminNav from "../components/AdminNav";
+import React, { useEffect, useState } from "react";
+import useAuth from "../hooks/useAuth";
 
 const EditarPerfil = () => {
+  const { auth } = useAuth();
+  const [perfil, setPerfil] = useState({});
+
+  useEffect(() => {
+    setPerfil(auth);
+  }, [auth]);
   return (
     <>
       <AdminNav />
@@ -10,6 +18,70 @@ const EditarPerfil = () => {
         Modifica tu {""}{" "}
         <span className="font-bold text-indigo-600">Informacion</span>
       </p>
+
+      <div className="flex justify-center">
+        <div className="w-full rounded-lg bg-white p-5 shadow md:w-1/2">
+          <form>
+            <div className="my-3">
+              <label htmlFor="" className="font-bold uppercase text-gray-600">
+                Nombre
+              </label>
+
+              <input
+                type="text"
+                className="mt-5 w-full rounded-lg border bg-gray-50 p-2"
+                name="nombre"
+                value={perfil.nombre || ""}
+                onChange={(e) =>
+                  setPerfil({ ...perfil, [e.target.name]: e.target.value })
+                }
+              />
+            </div>
+
+            <div className="my-3">
+              <label htmlFor="" className="font-bold uppercase text-gray-600">
+                Sitio Web
+              </label>
+
+              <input
+                type="text"
+                className="mt-5 w-full rounded-lg border bg-gray-50 p-2"
+                name="web"
+              />
+            </div>
+
+            <div className="my-3">
+              <label htmlFor="" className="font-bold uppercase text-gray-600">
+                Teléfono
+              </label>
+
+              <input
+                type="text"
+                className="mt-5 w-full rounded-lg border bg-gray-50 p-2"
+                name="telefono"
+              />
+            </div>
+
+            <div className="my-3">
+              <label htmlFor="" className="font-bold uppercase text-gray-600">
+                Email
+              </label>
+
+              <input
+                type="text"
+                className="mt-5 w-full rounded-lg border bg-gray-50 p-2"
+                name="email"
+              />
+            </div>
+
+            <input
+              type="submit"
+              value={"Guardar Cambios"}
+              className="mt-5 w-full cursor-pointer rounded-lg bg-indigo-700 px-10 py-3 font-bold uppercase text-white transition duration-200 hover:bg-indigo-800"
+            />
+          </form>
+        </div>
+      </div>
     </>
   );
 };
