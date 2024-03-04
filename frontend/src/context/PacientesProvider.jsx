@@ -5,6 +5,7 @@ const PacientesContext = createContext();
 
 const PacientesProvider = ({ children }) => {
   const [pacientes, setPacientes] = useState([]);
+  const [paciente, setPaciente] = useState({});
 
   useEffect(() => {
     const obtenerPacientes = async () => {
@@ -28,6 +29,43 @@ const PacientesProvider = ({ children }) => {
   }, []);
 
   const guardarPaciente = async (paciente) => {
+    const token = localStorage.getItem("token");
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    if (paciente.id) {
+      try {
+        const { data } = await clienteAxios.put(
+          `/pacientes/${paciente.id}`,
+          paciente,
+          config,
+        );
+        const pacientesActualizados = pacientes.map((pacienteState) =>
+          pacienteState._id === data._id ? data : pacienteState,
+        );
+
+        setPacientes(pacientesActualizados);
+      } catch (error) {}
+    } else {
+      try {
+        const { data } = await clienteAxios.post(
+          "/pacientes",
+          paciente,
+          config,
+        );
+
+        const { createdAt, updatedAT, __v, ...pacienteAlmacenado } = data;
+
+        setPacientes([pacienteAlmacenado, ...pacientes]);
+      } catch (error) {
+        console.log(error.response.data.msg);
+      }
+    }
+
     try {
       const token = localStorage.getItem("token");
       const config = {
@@ -46,11 +84,17 @@ const PacientesProvider = ({ children }) => {
     }
   };
 
+  const setEdicion = (paciente) => {
+    setPaciente(paciente);
+  };
+
   return (
     <PacientesContext.Provider
       value={{
         pacientes,
         guardarPaciente,
+        setEdicion,
+        paciente,
       }}
     >
       {children}
