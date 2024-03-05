@@ -2,11 +2,41 @@ import { useState } from "react";
 
 import AdminNav from "../components/AdminNav";
 import Alerta from "../components/Alerta";
+import useAuth from "../hooks/useAuth";
 
 const CambiarPassword = () => {
+  const { guardarPassword } = useAuth();
+
   const [alerta, setAlerta] = useState({});
-  const handleSubmit = (email) => {
+  const [password, setPassword] = useState({
+    pwd_actual: "",
+    pwd_nuevo: "",
+  });
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (Object.values(password).some((campo) => campo === "")) {
+      setAlerta({
+        msg: "Todos los campos son obligatorios",
+        error: true,
+      });
+
+      return;
+    }
+
+    if (password.pwd_nuevo.length < 6) {
+      setAlerta({
+        msg: "El password debe tener al menos 6 caracteres",
+        error: true,
+      });
+
+      return;
+    }
+
+    const respuesta = await guardarPassword(password);
+
+    setAlerta(respuesta);
   };
 
   const { msg } = alerta;
@@ -14,7 +44,7 @@ const CambiarPassword = () => {
     <>
       <AdminNav />
 
-      <h2 className="text.3xl mt-10 text-center font-black">
+      <h2 className="mt-10 text-center text-3xl font-black">
         Cambiar Password
       </h2>
       <p className="mb-10 mt-5 text-center text-xl">
@@ -33,10 +63,16 @@ const CambiarPassword = () => {
               </label>
 
               <input
-                type="text"
+                type="password"
                 className="mt-5 w-full rounded-lg border bg-gray-50 p-2"
-                name="nombre"
+                name="pwd_actual"
                 placeholder="Escribe tu password actual"
+                onChange={(e) =>
+                  setPassword({
+                    ...password,
+                    [e.target.name]: e.target.value,
+                  })
+                }
               />
             </div>
 
@@ -46,10 +82,16 @@ const CambiarPassword = () => {
               </label>
 
               <input
-                type="text"
+                type="password"
                 className="mt-5 w-full rounded-lg border bg-gray-50 p-2"
-                name="nombre"
+                name="pwd_nuevo"
                 placeholder="Escribe tu Nuevo Password"
+                onChange={(e) =>
+                  setPassword({
+                    ...password,
+                    [e.target.name]: e.target.value,
+                  })
+                }
               />
             </div>
 
