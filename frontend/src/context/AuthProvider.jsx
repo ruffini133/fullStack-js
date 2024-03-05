@@ -26,6 +26,7 @@ const AuthProvider = ({ children }) => {
       try {
         const { data } = await clienteAxios.get("/veterinarios/perfil", config);
         setAuth(data);
+        console.log(data);
       } catch (error) {
         console.log(error.response.data.msg);
         setAuth({});
@@ -58,11 +59,16 @@ const AuthProvider = ({ children }) => {
 
     try {
       const url = `/veterinarios/perfil/${datos._id}`;
-      const { data } = clienteAxios.put(url, datos, config);
+      const { data } = await clienteAxios.put(url, datos, config);
 
-      console.log(data);
+      return {
+        msg: "Perfil actualizado correctamente",
+      };
     } catch (error) {
-      console.log(error.response);
+      return {
+        msg: error.response.data.msg,
+        error: true,
+      };
     }
   };
 
